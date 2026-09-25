@@ -1,0 +1,36 @@
+name: Build StudyAI APK
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.10'
+
+      - name: Extract StudyAI project
+        run: |
+          unzip -q StudyAI_Android_Project.zip
+          cd StudyAI_Android_Project-1
+          gradle :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StudyAI-APK
+          path: StudyAI_Android_Project-1/app/build/outputs/apk/debug/app-debug.apk
